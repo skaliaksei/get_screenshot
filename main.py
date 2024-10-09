@@ -33,6 +33,8 @@ text_file = "db.txt"
 def take_screenshot():
     # Получаем текущее время для имени файла
     current_time = datetime.now().strftime("%Y-%m-%d__%H:%M")
+    hours = datetime.now().strftime("%H")
+    minutes = datetime.now().strftime("%M")
     # Делаем скриншот указанной области
     screenshot = pyautogui.screenshot(region=(left_x, left_y, right_x - left_x, right_y - left_y))
     # Сохраняем скриншот в папку
@@ -44,14 +46,15 @@ def take_screenshot():
     # Работаем с контрастностью
     start_image = Image.open(f"{screenshot_path}")
     changing_contrast = ImageEnhance.Contrast(start_image)
-    contrast_image = changing_contrast.enhance(10)
-    contrast_image.save('screen/contrast.png')
+    contrast_image = changing_contrast.enhance(2)
+    contrast_image.save(f"screen/{hours}-{minutes}_contrast.png")
 
     # Распознаем текст на скриншоте
     # Предыдущий:
     # recognized_text = pytesseract.image_to_string(screenshot)
     # Новый:
-    recognized_text = pytesseract.image_to_string(contrast_image, config='--psm 6 --oem 3')
+    # recognized_text = pytesseract.image_to_string(contrast_image, config='--psm 6 --oem 3')
+    recognized_text = pytesseract.image_to_string(contrast_image, config = '-c tessedit_char_whitelist=0123456789')
 
     try:
         print(float(recognized_text))
